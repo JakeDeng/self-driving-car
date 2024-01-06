@@ -11,9 +11,40 @@ class Graph {
   }
 
   addSegment(segment) {
-    if(this.containsSegment(segment)) return false;
+    if(this.containsSegment(segment) || segment.p1.equals(segment.p2)) return false;
     this.segments.push(segment);
     return true;
+  }
+
+  removeSegment(segment) {
+    const segIndex = this.segments.indexOf(segment);
+    if(segIndex < 0 || segIndex >= this.segments.length) return false;
+    
+    this.segments.splice(segIndex, 1);
+    return true;
+  }
+
+  removePoint(point) {
+    const pointIndex = this.points.indexOf(point);
+    if(pointIndex < 0 || pointIndex >= this.points.length) return false;
+
+    const segments = this.getSegmentsByPoint(point);
+    segments.forEach((segment) => this.removeSegment(segment))
+    this.points.splice(pointIndex, 1);
+    return true;
+  }
+
+  removeAll() {
+    this.segments = []
+    this.points = []
+  }
+
+  getSegmentsByPoint(point) {
+    const segmentsByPoint = [];
+    for(const segment of this.segments) {
+      if(segment.includesPoint(point)) segmentsByPoint.push(segment);
+    }
+    return segmentsByPoint;
   }
 
   containsPoint(point) {
