@@ -4,6 +4,15 @@ class Graph {
     this.segments = segments;
   }
 
+  static load(graph){
+    let points = graph.points.map(point => new Point(point.x, point.y));
+    let segments = graph.segments.map(segment => new Segment(
+      points.find(p => p.equals(segment.p1)),
+      points.find(p => p.equals(segment.p2))
+    ));;
+    return new Graph(points, segments);
+  }
+
   addPoint(point) {
     if(this.containsPoint(point)) return false;
     this.points.push(point);
