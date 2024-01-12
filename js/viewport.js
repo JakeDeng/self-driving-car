@@ -11,6 +11,7 @@ class Viewport {
       start: new Point(0,0),
       end: new Point(0,0),
       offset: new Point(0,0),
+      enabled: false,
       active: false
     };
     
@@ -25,6 +26,10 @@ class Viewport {
     this.ctx.scale(1/this.zoom, 1/this.zoom);
     const offset = this.getOffset();
     this.ctx.translate(offset.x, offset.y);
+  }
+
+  isDragOffsetEnabled() {
+    return this.drag.enabled;
   }
   
   getOffset() {
@@ -45,11 +50,30 @@ class Viewport {
     this.canvas.addEventListener('mousedown', this.#onMouseDown.bind(this));
     this.canvas.addEventListener('mouseup', this.#onMouseUp.bind(this));
     this.canvas.addEventListener('mousemove', this.#onMouseMove.bind(this));
+
+    document.addEventListener('keydown', this.#onKeyDown.bind(this));
+    document.addEventListener('keyup', this.#onKeyUp.bind(this));
+  }
+
+  #onKeyDown(event) {
+    if(event.keyCode === 32) {//space bar
+      document.body.style.cursor = 'pointer';
+      this.drag.enabled = true;
+    }
+  }
+
+  #onKeyUp(event) {
+    if(event.keyCode === 32) {
+      this.drag.enabled = false;
+      if(this.drag.active == false) {
+        document.body.style.cursor = 'default';
+      }
+    }
   }
 
   #onMouseDown(event) {
-    if(event.button == 1) {//middle click
-      this.drag.active = true;
+    if(event.button === 0 && this.drag.enabled) {//left click and space bar is pressed
+      this.drag.active = true
       this.drag.start = this.getMouserPosition(event);
     }
   }
@@ -64,10 +88,14 @@ class Viewport {
   #onMouseUp(event) {
     if(this.drag.active) {
       this.offset = add(this.offset, this.drag.offset);
+      if(this.drag.enabled == false) {
+          document.body.style.cursor = 'default';
+      }
       this.drag = {
         start: new Point(0,0),
         end: new Point(0,0),
         offset: new Point(0,0),
+        enabled: false,
         active: false
       }
     }

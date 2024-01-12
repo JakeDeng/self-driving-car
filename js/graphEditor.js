@@ -35,7 +35,7 @@ class GraphEditor {
   }
 
   #onMouseDown(event) {
-    if(event.button == 2) {//right click
+    if(event.button == 2 && !this.viewport.isDragOffsetEnabled()) {//right click and space is not pressed
       if(this.selectedPoint) {
         this.selectedPoint = null;
       } else if(this.hoveredPoint){
@@ -43,7 +43,7 @@ class GraphEditor {
       }
     }
 
-    if(event.button == 0) {//left click
+    if(event.button == 0 && !this.viewport.isDragOffsetEnabled()) {//left click and space is not pressed
       if(this.hoveredPoint) {
         this.#selectPoint(this.hoveredPoint);
         this.dragging = true;
